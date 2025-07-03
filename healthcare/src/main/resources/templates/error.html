@@ -35,10 +35,10 @@
             function setDarkMode(on) {
                 if (on) {
                     document.body.classList.add('dark-mode');
-                    icon.textContent = '☀️';
+                    icon.textContent = 'light';
                 } else {
                     document.body.classList.remove('dark-mode');
-                    icon.textContent = '🌙';
+                    icon.textContent = 'dark';
                 }
             }
             if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);

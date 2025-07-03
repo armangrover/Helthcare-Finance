@@ -37,10 +37,10 @@
             function setDarkMode(on) {
                 if (on) {
                     document.body.classList.add('dark-mode');
-                    icon.textContent = 'light';
+                    icon.textContent = 'Light';
                 } else {
                     document.body.classList.remove('dark-mode');
-                    icon.textContent = 'dark';
+                    icon.textContent = 'Dark';
                 }
             }
             if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);
