@@ -8,26 +8,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig {
-
         @Bean
         @Order(1)
         public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-                http.securityMatcher("/api/**");
-                http.cors();
                 http
+                                .securityMatcher("/api/**")
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
-                                                                "/api/auth/register",
-                                                                "/api/auth/login",
-                                                                "/api/auth/logout",
-                                                                "/api/charts/**",
+                                                                "/api/auth/**",
                                                                 "/v3/api-docs/**",
-                                                                "/swagger-ui/**",
-                                                                "/swagger-ui.html")
+                                                                "/swagger-ui/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .httpBasic();
@@ -37,13 +37,15 @@ public class SecurityConfig {
         @Bean
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
-                http.cors();
                 http
+                                .cors(cors -> cors.disable()) // Disable CORS for web routes as they're same-origin
+                                .requiresChannel(channel -> channel.anyRequest().requiresSecure()) // Force HTTPS
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/", "/login", "/register",
-                                                                "/css/**", "/js/**", "/images/**")
+                                                                "/css/**", "/js/**", "/images/**",
+                                                                "/favicon.ico")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
@@ -61,5 +63,20 @@ public class SecurityConfig {
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(Arrays.asList(
+                                "http://localhost:3000",
+                                "https://helthcare-finance-production.up.railway.app"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("*"));
+                configuration.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/api/**", configuration);
+                return source;
         }
 }

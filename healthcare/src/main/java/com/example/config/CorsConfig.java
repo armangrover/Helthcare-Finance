@@ -12,15 +12,19 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
+                registry.addMapping("/api/**")
                         .allowedOrigins(
-                                "http://localhost:3000", // local dev
-                                "https://helthcare-finance-production.up.railway.app" // deployed frontend
-                // Add more allowed origins as needed
-                )
+                                "http://localhost:3000",
+                                "https://helthcare-finance-production.up.railway.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // ✅ REQUIRED for session-based login
+                        .allowCredentials(true)
+                        .maxAge(3600);
+
+                registry.addMapping("/**")
+                        .allowedOrigins("https://helthcare-finance-production.up.railway.app")
+                        .allowedMethods("GET", "POST")
+                        .allowCredentials(false);
             }
         };
     }
