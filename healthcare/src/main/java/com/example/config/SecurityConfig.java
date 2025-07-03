@@ -6,17 +6,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig {
+
         @Bean
         @Order(1)
         public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
@@ -27,6 +26,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/api/auth/**",
+                                                                "/api/register", // Explicitly include register endpoint
                                                                 "/v3/api-docs/**",
                                                                 "/swagger-ui/**")
                                                 .permitAll()
@@ -39,9 +39,8 @@ public class SecurityConfig {
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .cors(withDefaults()) // Enable CORS for web routes
-                                .requiresChannel(channel -> channel.anyRequest().requiresSecure()) // Force HTTPS
-                                .csrf(csrf -> csrf.disable())
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/", "/login", "/register",
@@ -52,10 +51,12 @@ public class SecurityConfig {
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .defaultSuccessUrl("/dashboard", true)
-                                                .failureUrl("/login?error=true"))
+                                                .failureUrl("/login?error=true")
+                                                .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
-                                                .logoutSuccessUrl("/login"))
+                                                .logoutSuccessUrl("/login")
+                                                .permitAll())
                                 .sessionManagement(session -> session
                                                 .maximumSessions(1));
                 return http.build();
@@ -75,9 +76,10 @@ public class SecurityConfig {
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("*"));
                 configuration.setAllowCredentials(true);
+                configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/api/**", configuration);
+                source.registerCorsConfiguration("/**", configuration); // Apply to all paths
                 return source;
         }
 }
