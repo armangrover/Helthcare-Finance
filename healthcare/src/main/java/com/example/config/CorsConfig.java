@@ -13,8 +13,12 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "https://your-frontend-domain.com")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedOrigins(
+                                "http://localhost:3000", // local dev
+                                "https://helthcare-finance-production.up.railway.app" // deployed frontend
+                // Add more allowed origins as needed
+                )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true); // ✅ REQUIRED for session-based login
             }
