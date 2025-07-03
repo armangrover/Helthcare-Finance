@@ -71,15 +71,17 @@ public class SecurityConfig {
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowedOrigins(Arrays.asList(
-                                "http://localhost:3000",
-                                "https://helthcare-finance-production.up.railway.app"));
+                                "https://helthcare-finance-production.up.railway.app",
+                                "http://localhost:3000"
+                ));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("*"));
                 configuration.setAllowCredentials(true);
                 configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", configuration); // Apply to all paths
+                // Only apply CORS to API endpoints
+                source.registerCorsConfiguration("/api/**", configuration);
                 return source;
         }
 }
