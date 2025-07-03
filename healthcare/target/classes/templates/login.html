@@ -15,7 +15,7 @@
             style="background: #fee2e2; color: #b91c1c; padding: 1em; border-radius: 8px; margin-bottom: 1em; text-align:center; font-weight:600;">
             Invalid username or password.
         </div>
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/api/auth/login}" method="post">
             <label>Username:</label>
             <input type="text" name="username" required /><br />
             <label>Password:</label>
