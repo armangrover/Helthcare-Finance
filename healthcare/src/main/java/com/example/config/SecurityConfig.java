@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
 
@@ -38,7 +39,7 @@ public class SecurityConfig {
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .cors(cors -> cors.disable()) // Disable CORS for web routes as they're same-origin
+                                .cors(withDefaults()) // Enable CORS for web routes
                                 .requiresChannel(channel -> channel.anyRequest().requiresSecure()) // Force HTTPS
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
