@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Dashboard - Healthcare Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/expenses}">Expenses</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+
+    <main>
+        <h2>Hello, <span th:text="${username}">User</span>!</h2>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Total Expenses</h3>
+                <p th:text="${totalExpenses}">0</p>
+            </div>
+            <div class="card">
+                <h3>Total Amount</h3>
+                <p th:text="${'₹' + #numbers.formatDecimal(totalAmount, 1, 2)}">₹0.00</p>
+            </div>
+        </div>
+
+        <div class="charts">
+            <h3>Expense Analytics</h3>
+            <div class="chart-container" style="display:flex; flex-direction:column; align-items:center;">
+                <canvas id="pieChart" width="300" height="300" style="width:300px; height:300px;"></canvas>
+                <canvas id="barChart" width="350" height="300"
+                    style="display:none; width:300px; height:300px;"></canvas>
+                <button id="toggleChart" style="margin-top:1em;">Toggle Chart</button>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a th:href="@{/expenses/add}" class="btn">Add New Expense</a>
+            <a th:href="@{/expenses}" class="btn">View All Expenses</a>
+        </div>
+
+        <h3>Spending Insights</h3>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Healthcare Tracker</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let currentChart = 'pie';
+        let pieChartInstance = null;
+        let barChartInstance = null;
+
+        function renderPieChart(data) {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            if (pieChartInstance) pieChartInstance.destroy();
+            pieChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF']
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        function renderBarChart(data) {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            if (barChartInstance) barChartInstance.destroy();
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Amount',
+                        data: data.values,
+                        backgroundColor: '#36A2EB'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function fetchChartData() {
+            fetch('/api/charts/data')
+                .then(response => response.json())
+                .then(data => {
+                    renderPieChart(data);
+                    renderBarChart(data);
+                });
+        }
+
+        document.getElementById('toggleChart').addEventListener('click', function () {
+            if (currentChart === 'pie') {
+                document.getElementById('pieChart').style.display = 'none';
+                document.getElementById('barChart').style.display = 'block';
+                currentChart = 'bar';
+            } else {
+                document.getElementById('pieChart').style.display = 'block';
+                document.getElementById('barChart').style.display = 'none';
+                currentChart = 'pie';
+            }
+        });
+
+        fetchChartData();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    icon.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    icon.textContent = '🌙';
+                }
+            }
+            if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    const isDark = !document.body.classList.contains('dark-mode');
+                    setDarkMode(isDark);
+                    localStorage.setItem('darkMode', isDark);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Profile - Healthcare Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/expenses}">Expenses</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+
+    <main>
+        <h2>Manage Account Details</h2>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="success-message"
+            style="background: #d4edda; color: #155724; padding: 1em; border-radius: 4px; margin-bottom: 1em;">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="error-message"
+            style="background: #f8d7da; color: #721c24; padding: 1em; border-radius: 4px; margin-bottom: 1em;">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/users/update}" method="post">
+            <label>Username:</label>
+            <input type="text" name="username" th:value="${user.username}" required /><br />
+            <label>Email:</label>
+            <input type="email" name="email" th:value="${user.email}" required /><br />
+            <label>New Password (leave blank to keep current):</label>
+            <input type="password" name="password" /><br />
+            <button type="submit">Update Profile</button>
+        </form>
+
+        <div style="margin-top: 2em;">
+            <h3>Danger Zone</h3>
+            <form th:action="@{/users/delete}" method="post" style="margin-top:1em;">
+                <button type="submit" class="btn-danger"
+                    onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">
+                    Delete Account
+                </button>
+            </form>
+        </div>
+
+        <p><a th:href="@{/dashboard}">Back to Dashboard</a></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Healthcare Tracker</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    icon.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    icon.textContent = '🌙';
+                }
+            }
+            if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    const isDark = !document.body.classList.contains('dark-mode');
+                    setDarkMode(isDark);
+                    localStorage.setItem('darkMode', isDark);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

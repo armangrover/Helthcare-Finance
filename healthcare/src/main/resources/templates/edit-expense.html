@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edit Expense - Healthcare Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/expenses}">Expenses</a>
+        <a th:href="@{/profile}">Profile</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+
+    <main>
+        <h2>Update Expense Information</h2>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="success-message"
+            style="background: #d4edda; color: #155724; padding: 1em; border-radius: 4px; margin-bottom: 1em;">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="error-message"
+            style="background: #f8d7da; color: #721c24; padding: 1em; border-radius: 4px; margin-bottom: 1em;">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{'/expenses/update/' + ${expense.id}}" method="post">
+            <label>Date:</label>
+            <input type="date" name="date" th:value="${expense.date}" required /><br />
+            <label>Category:</label>
+            <input type="text" name="category" th:value="${expense.category}" required /><br />
+            <label>Amount (₹):</label>
+            <input type="number" name="amount" step="0.01" th:value="${expense.amount}" required /><br />
+            <button type="submit">Update Expense</button>
+        </form>
+        <p><a th:href="@{/expenses}">Back to Expenses</a></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Healthcare Tracker</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    icon.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    icon.textContent = '🌙';
+                }
+            }
+            if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    const isDark = !document.body.classList.contains('dark-mode');
+                    setDarkMode(isDark);
+                    localStorage.setItem('darkMode', isDark);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

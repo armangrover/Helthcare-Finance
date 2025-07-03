@@ -1,0 +1,87 @@
+API Endpoints for Postman Testing
+================================
+
+1. Register a new user
+----------------------
+POST http://localhost:8080/api/auth/register
+Body (raw, JSON):
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "yourpassword"
+}
+(If this fails, use form-data with the same keys.)
+
+2. Login
+--------
+POST http://localhost:8080/api/auth/login
+Body (form-data):
+username: yourusername
+password: yourpassword
+
+3. Logout
+---------
+POST http://localhost:8080/api/auth/logout
+
+4. Get all expenses
+-------------------
+GET http://localhost:8080/api/expenses
+
+5. Add a new expense
+--------------------
+POST http://localhost:8080/api/expenses
+Body (raw, JSON):
+{
+  "category": "meds",
+  "amount": 123.45,
+  "date": "2024-06-25"
+}
+
+6. Update an expense
+--------------------
+PUT http://localhost:8080/api/expenses/{id}
+(Replace {id} with the expense ID)
+Body (raw, JSON):
+{
+  "category": "test",
+  "amount": 200,
+  "date": "2024-06-26"
+}
+
+7. Delete an expense
+--------------------
+DELETE http://localhost:8080/api/expenses/{id}
+(Replace {id} with the expense ID)
+
+8. Get category pie chart (image)
+---------------------------------
+GET http://localhost:8080/api/charts/pie
+
+9. Get monthly bar chart (image)
+--------------------------------
+GET http://localhost:8080/api/charts/bar
+
+10. Get chart data (JSON)
+------------------------
+GET http://localhost:8080/api/charts/data
+
+11. Securely update user credentials
+------------------------------------
+PUT http://localhost:8080/api/users/secure-update
+Body (raw, JSON):
+{
+  "oldPassword": "currentpassword",
+  "newUsername": "newname",
+  "newPassword": "newpassword"
+}
+
+12. Delete your user account
+---------------------------
+DELETE http://localhost:8080/api/users/delete
+
+
+How to use in Postman:
+----------------------
+- For all /api/** endpoints, use the Authorization tab → Basic Auth → enter your username and password.
+- For POST/PUT, set Body to raw and JSON (or form-data if specified).
+- For GET/DELETE, no body is needed.

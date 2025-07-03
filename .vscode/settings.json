@@ -1,0 +1,21 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "xprotocol",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 33060,
+            "driver": "MySQL",
+            "name": "project",
+            "database": "hibernet",
+            "username": "root",
+            "password": "arman",
+            "connectionTimeout": 30
+        }
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
+}

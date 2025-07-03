@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Registration Successful</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta http-equiv="refresh" content="2;url=/login" />
+</head>
+
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+    <main>
+        <div class="success-message"
+            style="background: #d4edda; color: #155724; padding: 1.5em; border-radius: 8px; text-align: center;">
+            <h2>User registered successfully!</h2>
+            <p>You will be redirected to the login page shortly...</p>
+            <p>If not, <a th:href="@{/login}">click here</a>.</p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Healthcare Tracker</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    icon.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    icon.textContent = '🌙';
+                }
+            }
+            if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    const isDark = !document.body.classList.contains('dark-mode');
+                    setDarkMode(isDark);
+                    localStorage.setItem('darkMode', isDark);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

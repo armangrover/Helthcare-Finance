@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Login - Healthcare Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main>
+        <h2>Welcome Back!</h2>
+        <div th:if="${param.error}" class="error-message"
+            style="background: #fee2e2; color: #b91c1c; padding: 1em; border-radius: 8px; margin-bottom: 1em; text-align:center; font-weight:600;">
+            Invalid username or password.
+        </div>
+        <form th:action="@{/login}" method="post">
+            <label>Username:</label>
+            <input type="text" name="username" required /><br />
+            <label>Password:</label>
+            <input type="password" name="password" required /><br />
+            <button type="submit">Login</button>
+        </form>
+        <p><a th:href="@{/register}">Register</a></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Healthcare Tracker</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+            function setDarkMode(on) {
+                if (on) {
+                    document.body.classList.add('dark-mode');
+                    icon.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    icon.textContent = '🌙';
+                }
+            }
+            if (localStorage.getItem('darkMode') === 'true') setDarkMode(true);
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    const isDark = !document.body.classList.contains('dark-mode');
+                    setDarkMode(isDark);
+                    localStorage.setItem('darkMode', isDark);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
