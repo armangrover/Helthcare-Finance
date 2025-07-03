@@ -15,8 +15,9 @@ public class SecurityConfig {
         @Bean
         @Order(1)
         public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+                http.securityMatcher("/api/**");
+                http.cors();
                 http
-                                .securityMatcher("/api/**")
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
@@ -36,6 +37,7 @@ public class SecurityConfig {
         @Bean
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
+                http.cors();
                 http
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
