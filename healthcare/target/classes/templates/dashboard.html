@@ -3,6 +3,8 @@
 
 <head>
     <title>Dashboard - Healthcare Tracker</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iIzI1NjNlYiIvPgo8cGF0aCBkPSJNOCAxMkgxNlYyMEg4VjEyWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE2IDEySDI0VjIwSDE2VjEyWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iMTIgMjBIMjBWMjRIMTJWMjBaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
@@ -30,7 +32,8 @@
             </div>
         </div>
 
-        <div class="charts">
+        <!-- Charts temporarily disabled to fix mixed content issues -->
+        <!-- <div class="charts">
             <h3>Expense Analytics</h3>
             <div class="chart-container" style="display:flex; flex-direction:column; align-items:center;">
                 <canvas id="pieChart" width="300" height="300" style="width:300px; height:300px;"></canvas>
@@ -38,7 +41,7 @@
                     style="display:none; width:300px; height:300px;"></canvas>
                 <button id="toggleChart" style="margin-top:1em;">Toggle Chart</button>
             </div>
-        </div>
+        </div> -->
 
         <div class="quick-actions">
             <a th:href="@{/expenses/add}" class="btn">Add New Expense</a>
@@ -52,7 +55,8 @@
         <p>&copy; 2025 Healthcare Tracker</p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js temporarily disabled to fix mixed content issues -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let currentChart = 'pie';
         let pieChartInstance = null;
@@ -119,7 +123,7 @@
         });
 
         fetchChartData();
-    </script>
+    </script> -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggleBtn = document.getElementById('darkModeToggle');
