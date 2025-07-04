@@ -4,9 +4,6 @@
 <body>
     <div th:fragment="header">
         <header>
-            <!-- Add favicon link (HTTPS-safe) -->
-            <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1 th:text="${projectName != null ? projectName : 'Healthcare Tracker'}"></h1>
                 <button id="darkModeToggle"

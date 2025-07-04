@@ -23,7 +23,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@ModelAttribute UserRequestDTO request) {
+        System.out
+                .println("Register attempt for username: " + request.getUsername() + ", email: " + request.getEmail());
+
         if (userRepo.findByUsername(request.getUsername()).isPresent()) {
+            System.out.println("Registration failed: Username already exists: " + request.getUsername());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists!");
         }
 
@@ -36,6 +40,8 @@ public class AuthController {
 
         userRepo.save(user);
 
+        System.out.println("Registration successful for user: " + request.getUsername());
+
         return ResponseEntity.ok("User registered successfully!");
     }
 
@@ -43,16 +49,22 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestParam String username,
             @RequestParam String password,
             HttpSession session) {
+
+        System.out.println("Login attempt for username: " + username);
+
         User user = userRepo.findByUsername(username).orElse(null);
 
         // 👇 Use encoder to verify password
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            System.out.println("Login failed: Invalid credentials for user: " + username);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials!");
         }
 
         // Store user in session
         session.setAttribute("userId", user.getId());
         session.setAttribute("username", user.getUsername());
+
+        System.out.println("Login successful for user: " + username + " (ID: " + user.getId() + ")");
 
         return ResponseEntity.ok("Login successful!");
     }
@@ -61,5 +73,10 @@ public class AuthController {
     public ResponseEntity<String> logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok("Logged out successfully!");
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("API is working!");
     }
 }

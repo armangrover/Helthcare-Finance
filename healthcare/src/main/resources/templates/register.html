@@ -73,34 +73,56 @@
                 errorMessage.style.display = 'none';
                 successMessage.style.display = 'none';
 
+                // Show loading state
+                const submitButton = registerForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Registering...';
+                submitButton.disabled = true;
+
                 // Create form data
                 const formData = new FormData();
                 formData.append('username', username);
                 formData.append('email', email);
                 formData.append('password', password);
 
+                console.log('Sending register request to /api/auth/register');
+
                 // Send API request
                 fetch('/api/auth/register', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    credentials: 'include' // Include cookies for session
                 })
                     .then(response => {
+                        console.log('Response status:', response.status);
+                        console.log('Response headers:', response.headers);
+
                         if (response.ok) {
-                            successMessage.textContent = 'Registration successful! Redirecting to login...';
-                            successMessage.style.display = 'block';
-                            // Redirect to login after successful registration
-                            setTimeout(() => {
-                                window.location.href = '/login';
-                            }, 2000);
+                            return response.text().then(text => {
+                                console.log('Registration successful:', text);
+                                successMessage.textContent = 'Registration successful! Redirecting to login...';
+                                successMessage.style.display = 'block';
+                                // Redirect to login after successful registration
+                                setTimeout(() => {
+                                    window.location.href = '/login';
+                                }, 2000);
+                            });
                         } else {
                             return response.text().then(text => {
-                                throw new Error(text || 'Registration failed');
+                                console.log('Registration failed:', text);
+                                throw new Error(text || `Registration failed with status ${response.status}`);
                             });
                         }
                     })
                     .catch(error => {
+                        console.error('Registration error:', error);
                         errorMessage.textContent = error.message || 'Registration failed. Please try again.';
                         errorMessage.style.display = 'block';
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
                     });
             });
         });

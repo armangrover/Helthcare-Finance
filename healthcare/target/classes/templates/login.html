@@ -70,33 +70,55 @@
                 errorMessage.style.display = 'none';
                 successMessage.style.display = 'none';
 
+                // Show loading state
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Logging in...';
+                submitButton.disabled = true;
+
                 // Create form data
                 const formData = new FormData();
                 formData.append('username', username);
                 formData.append('password', password);
 
+                console.log('Sending login request to /api/auth/login');
+
                 // Send API request
                 fetch('/api/auth/login', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    credentials: 'include' // Include cookies for session
                 })
                     .then(response => {
+                        console.log('Response status:', response.status);
+                        console.log('Response headers:', response.headers);
+
                         if (response.ok) {
-                            successMessage.textContent = 'Login successful! Redirecting...';
-                            successMessage.style.display = 'block';
-                            // Redirect to dashboard after successful login
-                            setTimeout(() => {
-                                window.location.href = '/dashboard';
-                            }, 1000);
+                            return response.text().then(text => {
+                                console.log('Login successful:', text);
+                                successMessage.textContent = 'Login successful! Redirecting...';
+                                successMessage.style.display = 'block';
+                                // Redirect to dashboard after successful login
+                                setTimeout(() => {
+                                    window.location.href = '/dashboard';
+                                }, 1000);
+                            });
                         } else {
                             return response.text().then(text => {
-                                throw new Error(text || 'Login failed');
+                                console.log('Login failed:', text);
+                                throw new Error(text || `Login failed with status ${response.status}`);
                             });
                         }
                     })
                     .catch(error => {
+                        console.error('Login error:', error);
                         errorMessage.textContent = error.message || 'Login failed. Please try again.';
                         errorMessage.style.display = 'block';
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
                     });
             });
         });
