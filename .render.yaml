@@ -6,10 +6,10 @@ services:
     autoDeploy: true
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://<host>:<port>/<dbname>?useSSL=false&serverTimezone=UTC
+        value: jdbc:mysql://mysql.railway.internal:3306/railway?useSSL=false&serverTimezone=UTC
       - key: SPRING_DATASOURCE_USERNAME
-        value: <your_db_user>
+        value: root
       - key: SPRING_DATASOURCE_PASSWORD
-        value: <your_db_password>
+        value: TBosFbSoMsULYBxgQTcFEUqsezpBgrEy
     dockerContext: ./healthcare
     dockerfilePath: ./healthcare/Dockerfile
