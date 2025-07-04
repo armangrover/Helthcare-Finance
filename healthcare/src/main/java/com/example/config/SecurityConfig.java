@@ -6,12 +6,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig {
@@ -21,14 +17,16 @@ public class SecurityConfig {
         public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .securityMatcher("/api/**")
-                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
-                                                                "/api/auth/**",
-                                                                "/api/register", // Explicitly include register endpoint
+                                                                "/api/auth/register",
+                                                                "/api/auth/login",
+                                                                "/api/auth/logout",
+                                                                "/api/charts/**",
                                                                 "/v3/api-docs/**",
-                                                                "/swagger-ui/**")
+                                                                "/swagger-ui/**",
+                                                                "/swagger-ui.html")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .httpBasic();
@@ -39,24 +37,20 @@ public class SecurityConfig {
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+                                .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/", "/login", "/register",
-                                                                "/css/**", "/js/**", "/images/**",
-                                                                "/favicon.ico")
+                                                                "/css/**", "/js/**", "/images/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .defaultSuccessUrl("/dashboard", true)
-                                                .failureUrl("/login?error=true")
-                                                .permitAll())
+                                                .failureUrl("/login?error=true"))
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
-                                                .logoutSuccessUrl("/login")
-                                                .permitAll())
+                                                .logoutSuccessUrl("/login"))
                                 .sessionManagement(session -> session
                                                 .maximumSessions(1));
                 return http.build();
@@ -65,23 +59,5 @@ public class SecurityConfig {
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
-        }
-
-        @Bean
-        public CorsConfigurationSource corsConfigurationSource() {
-                CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(Arrays.asList(
-                                "https://helthcare-finance-production.up.railway.app",
-                                "http://localhost:3000"
-                ));
-                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                configuration.setAllowedHeaders(Arrays.asList("*"));
-                configuration.setAllowCredentials(true);
-                configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
-
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                // Only apply CORS to API endpoints
-                source.registerCorsConfiguration("/api/**", configuration);
-                return source;
         }
 }
