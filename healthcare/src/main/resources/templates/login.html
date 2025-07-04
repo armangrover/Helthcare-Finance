@@ -13,15 +13,17 @@
 
     <main>
         <h2>Welcome Back!</h2>
-        <div th:if="${param.error}" class="error-message"
-            style="background: #fee2e2; color: #b91c1c; padding: 1em; border-radius: 8px; margin-bottom: 1em; text-align:center; font-weight:600;">
-            Invalid username or password.
+        <div id="error-message" class="error-message"
+            style="display: none; background: #fee2e2; color: #b91c1c; padding: 1em; border-radius: 8px; margin-bottom: 1em; text-align:center; font-weight:600;">
         </div>
-        <form th:action="@{/login}" method="post">
+        <div id="success-message" class="success-message"
+            style="display: none; background: #dcfce7; color: #166534; padding: 1em; border-radius: 8px; margin-bottom: 1em; text-align:center; font-weight:600;">
+        </div>
+        <form id="loginForm">
             <label>Username:</label>
-            <input type="text" name="username" required /><br />
+            <input type="text" name="username" id="username" required /><br />
             <label>Password:</label>
-            <input type="password" name="password" required /><br />
+            <input type="password" name="password" id="password" required /><br />
             <button type="submit">Login</button>
         </form>
         <p><a th:href="@{/register}">Register</a></p>
@@ -52,6 +54,51 @@
                     localStorage.setItem('darkMode', isDark);
                 });
             }
+
+            // Handle login form submission
+            const loginForm = document.getElementById('loginForm');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                // Hide previous messages
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+
+                // Send API request
+                fetch('/api/auth/login', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            successMessage.textContent = 'Login successful! Redirecting...';
+                            successMessage.style.display = 'block';
+                            // Redirect to dashboard after successful login
+                            setTimeout(() => {
+                                window.location.href = '/dashboard';
+                            }, 1000);
+                        } else {
+                            return response.text().then(text => {
+                                throw new Error(text || 'Login failed');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        errorMessage.textContent = error.message || 'Login failed. Please try again.';
+                        errorMessage.style.display = 'block';
+                    });
+            });
         });
     </script>
 </body>
